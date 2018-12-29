@@ -1,4 +1,4 @@
-﻿[官方网站](https://jqueryvalidation.org/documentation/)
+[官方网站](https://jqueryvalidation.org/documentation/)
 # jQuery Validate插件介绍
 jQuery Validate插件提供了强大的表单验证和错误信息提示功能，让客户端表单验证变得更简单，该插件内置诸多常用验证方法，还可自定义验证方法/规则和错误信息及其显示。默认错误信息为英文，支持多种语言，只需要下载对应的文件。
 
@@ -28,6 +28,7 @@ jQuery Validate插件提供了强大的表单验证和错误信息提示功能�
 - extension - 文件后缀
 - phoneUS - 美国电话号码
 - require_from_group - 组中指定数量的字段必填/选 （demo用上）
+- pattern 正则
 
 完整的方法列表可以查看在Github上的[仓库](https://github.com/jquery-validation/jquery-validation/tree/master/src/additional)
 
@@ -45,6 +46,7 @@ $.validator.methods.email = function(value, element) {
 
 - [required](https://jqueryvalidation.org/required-method/)
 此方法有三种重载`required()`, `required(dependency-expression)`, `required(dependency-callback)`，返回布尔值。可用于text, radio, checkbox, select等控件。
+
 #### 1. 总是必需
 ```javascript
 $("#myform").validate({
@@ -86,6 +88,7 @@ $("#myform").validate({
 ```
 ---
 - [remote](https://jqueryvalidation.org/remote-method/)
+
 例1，设定email字段为必需、邮箱格式并以ajax方式请求`check-email.php`进行验证
 ```javascript 
 $("#myform").validate({
@@ -98,6 +101,7 @@ $("#myform").validate({
     }
 });
 ```
+
 
 例2，设定email字段为必需、邮箱格式并以ajax方式请求`check-email.php`进行验证，并且请求方式设置为`post`，将username字段的值也发送到请求地址。
 ```javascript 
@@ -120,6 +124,7 @@ $("#myform").validate({
 });
 ```
 ---
+
 - [equalTo](https://jqueryvalidation.org/equalTo-method/)
 password_again的值与password相等
 ```javascript
@@ -133,6 +138,7 @@ $("#myform").validate({
 });
 ```
 ---
+
 - [require_from_group](https://jqueryvalidation.org/require_from_group-method/)
 三个号码至少要填一个才能通过验证：
 ```html
@@ -158,6 +164,18 @@ $("#myform").validate({
         work_phone: {
             require_from_group: [1, ".phone-group"]
         }
+    }
+});
+```
+- [pattern](https://github.com/jquery-validation/jquery-validation/blob/master/src/additional/pattern.js)
+使用正则表达式，验证文件名必须是 *数字 + .xml*
+```javascript
+$("#myform").validate({
+    rules: {
+        file: {
+            required: true,
+            pattern: "[0-9]+.xml"
+            },
     }
 });
 ```
@@ -197,7 +215,7 @@ $("#myform").validate({
         email: {
             required: true, 
             email: true,
-            minlength: 50
+            minlength: 6
         }
     }
 });
@@ -205,17 +223,94 @@ $("#myform").validate({
 
 我们还可以使用[jQuery.validator.addClassRules()](https://jqueryvalidation.org/jQuery.validator.addClassRules/)打包多个规则为一个“复合类方法”（*compound class method*）：
 ```javascript
-// combine them both, including the parameter for minlength
- $.validator.addClassRules("customer", { cRequired: true, cMinlength: 2 });
+ $.validator.addClassRules("cemail", { required: true, email: true, minlength: 6});
 ```
 而后可以将方法附加到元素的class里面：
 ```html
- <input name="customer1" class="customer">
- <input name="customer2" class="customer">
- <input name="customer3" class="customer">
+ <input name="email1" class="cemail" />
+ <input name="email2" class="cemail" />
+ <input name="email3" class="cemail" />
 ```
 ---
+
+### 5.修改内置方法的错误提示内容
+引用自[stackoverflow: jQuery validation: change default error message](https://stackoverflow.com/questions/2457032/jquery-validation-change-default-error-message)
+```javascript
+jQuery.extend(jQuery.validator.messages, {
+    required: "This field is required.",
+    remote: "Please fix this field.",
+    email: "Please enter a valid email address.",
+    url: "Please enter a valid URL.",
+    date: "Please enter a valid date.",
+    dateISO: "Please enter a valid date (ISO).",
+    number: "Please enter a valid number.",
+    digits: "Please enter only digits.",
+    creditcard: "Please enter a valid credit card number.",
+    equalTo: "Please enter the same value again.",
+    accept: "Please enter a value with a valid extension.",
+    maxlength: jQuery.validator.format("Please enter no more than {0} characters."),
+    minlength: jQuery.validator.format("Please enter at least {0} characters."),
+    rangelength: jQuery.validator.format("Please enter a value between {0} and {1} characters long."),
+    range: jQuery.validator.format("Please enter a value between {0} and {1}."),
+    max: jQuery.validator.format("Please enter a value less than or equal to {0}."),
+    min: jQuery.validator.format("Please enter a value greater than or equal to {0}.")
+});
+```
+
+---
+
+### 6.修改未通过验证的元素的提示效果
+#### 1.当验证未通过时，元素增加红色边框
+
+[jQuery Validation Plugin – Learn How To Show Custom Messages](http://www.99points.info/2015/04/jquery-validation-plugin-how-to-show-custom-error-messages/)
+
+用到`validate`方法的*highlight*和*unhighlight*选项参数
+
+*highlight*用于突出验证未通过的元素，可以添加css效果或者动画；反之，则使用*unhighlight*。
+
+例1. 我们定义了一个边框描红的css类*has_error*，然后验证不通过时显示，通过则移除：
+```html
+<style type="text/css">
+    .has_error {
+        border: 1px solid red;
+    }
+</style>
+```
+```javascript
+$("#myform").validate({
+    highlight: function (element) {
+        // add a class "has_error" to the element 
+        $(element).addClass('has_error');
+    },
+    unhighlight: function (element) {
+        // remove the class "has_error" from the element 
+        $(element).removeClass('has_error');
+    }
+})
+```
+
+#### 2.自定义错误信息的颜色
+
+#### 3.自定义错误信息的位置
+
+#### 4.errorcontainer
+
+#### 5.与noty的结合
+
+例2. 验证不通过时增加淡出再淡入的动画效果：
+```javascript
+$("#myform").validate({
+		highlight: function(element, errorClass) {
+			$(element).fadeOut(1000, function() {
+				$(element).fadeIn();
+			});
+		}
+});
+```
+
+---
 ### 4. 常见问题
+
 #### （1）字段名包含括号/点号的，需要用双引号将字段名括起来：
 ```javascript
 $("#myform").validate({
@@ -229,6 +324,7 @@ $("#myform").validate({
     }
 });
 ```
+ 
  
 #### （2）无限递归
 ```javascript
@@ -255,7 +351,7 @@ $("#myform").validate({
 });
 ```
 ### 3.示例
-为了尽可能多的用到内置的验证方法，例子的内容仅做演示，跟实际并不一定一致。
-1、基本使用，包含自定义方法和自定义错误信息
+为了尽可能多的用到内置的验证方法，例子的内容仅做演示。
+1、基本使用，包含自定义方法和自定义错误信息；修改内置方法的提示信息
 2、自定义错误信息的显示 （errorContainer，与noty结合）
 3、
