@@ -231,6 +231,8 @@ $("#myform").validate({
  <input name="email2" class="cemail" />
  <input name="email3" class="cemail" />
 ```
+
+一切看起来都很完美，只是细心的你发现*addClassRules*并没有提供自定义*messages*的选项，我们可以通过修改默认的*messages*的办法来定制错误提示信息。
 ---
 
 ### 5.修改内置方法的错误提示内容
@@ -260,11 +262,11 @@ jQuery.extend(jQuery.validator.messages, {
 ---
 
 ### 6.修改未通过验证的元素的提示效果
-#### 1.当验证未通过时，元素增加红色边框
+#### 1y
 
 [jQuery Validation Plugin – Learn How To Show Custom Messages](http://www.99points.info/2015/04/jquery-validation-plugin-how-to-show-custom-error-messages/)
 
-用到`validate`方法的*highlight*和*unhighlight*选项参数
+用到`validate`方法的[highlight](https://jqueryvalidation.org/validate/#highlight)和[unhighlight](https://jqueryvalidation.org/validate/#unhighlight)选项参数
 
 *highlight*用于突出验证未通过的元素，可以添加css效果或者动画；反之，则使用*unhighlight*。
 
@@ -289,7 +291,14 @@ $("#myform").validate({
 })
 ```
 
-#### 2.自定义错误信息的颜色
+#### 2.自定义提示信息的样式
+当元素不通过验证时，jQuery validation插件默认是在元素的后面添加一个*class="error"*的label用于显示提示信息（[errorClass](https://jqueryvalidation.org/validate/#errorclass)）。我们可以通过定制css类：*.error*来达到自定义错误提示信息样式的效果。
+还可以指定css类。
+```javascript
+$("#myform").validate({
+    errorClass: "invalid" //set error class
+});
+```
 
 #### 3.自定义错误信息的位置
 
