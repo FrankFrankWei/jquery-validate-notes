@@ -16,8 +16,8 @@
             border: 1px solid red;
         }
 
-        .error{
-            color:greenyellow;
+        .error {
+            color: greenyellow;
         }
 
         form {
@@ -54,6 +54,7 @@
         <input type="checkbox" name="marriage" id="marriage" value="1">Married <br> <br>
         <input type="text" name="mateName" /> <br> <br>
         <input type="submit" value="Submit">
+        <!-- <input type="button" value="noty" id="btnNoty" > -->
     </form>
     <!-- <script src="http://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
@@ -61,8 +62,15 @@
     <script src="./scripts/jquery-1.10.2.min.js"></script>
     <script src="./scripts/jquery.validate.min.js"></script>
     <script src="./scripts/additional-methods.min.js"></script>
+    <link href="./css/noty.css" rel="stylesheet">
+    <script src="./scripts/noty.min.js" type="text/javascript"></script>
     <script type="text/javascript">
+        $("#btnNoty").click(function () {
+            new Noty({
+                text: 'Some notification text',
+            }).show();
 
+        });
         $.validator.addMethod("laxEmail", function (value, element) {
             // allow any non-whitespace characters as the host part
             return this.optional(element) || /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@(?:\S{1,63})$/.test(value);
@@ -73,10 +81,33 @@
 
         $.validator.messages.required = "";
 
+        // $("form").validate({
+        //     errorPlacement: function (error, element) {
+        //         error.appendTo(element.parent("td").next("td"));
+        //     }
+        // });
+
         $.validator.addClassRules("cemail", { required: true, email: true, minlength: 16 });
         $(function () {
             $("form").validate({
                 debug: true,
+                // remote
+                // errorPlacement: function (error, element) {
+                //     error.appendTo(element.next("p"));
+                // },
+                // showErrors: function (map, list) {
+                //     new Noty({
+                //         text: map.value,
+                //         container: list.element
+                //     }).show();
+                // },
+                // errorElement: "p",
+                // errorPlacement: function (error, element) {
+                //     new Noty({
+                //         text: 'error',
+                //         container: element.parent
+                //     }).show();
+                // },
                 rules: {
                     name: "required",
                     age: {
@@ -132,7 +163,7 @@
                 unhighlight: function (element) {
                     // remove the class "has_error" from the element 
                     $(element).removeClass('has_error');
-                        // $(element).parent().removeClass('error')
+                    // $(element).parent().removeClass('error')
                 },
             });
         })

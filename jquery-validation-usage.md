@@ -290,22 +290,6 @@ $("#myform").validate({
     }
 })
 ```
-
-#### 2.自定义提示信息的样式
-当元素不通过验证时，jQuery validation插件默认是在元素的后面添加一个*class="error"*的label用于显示提示信息（[errorClass](https://jqueryvalidation.org/validate/#errorclass)）。我们可以通过定制css类：*.error*来达到自定义错误提示信息样式的效果。
-还可以指定css类。
-```javascript
-$("#myform").validate({
-    errorClass: "invalid" //set error class
-});
-```
-
-#### 3.自定义错误信息的位置
-
-#### 4.errorcontainer
-
-#### 5.与noty的结合
-
 例2. 验证不通过时增加淡出再淡入的动画效果：
 ```javascript
 $("#myform").validate({
@@ -317,7 +301,84 @@ $("#myform").validate({
 });
 ```
 
+#### 2.自定义提示信息的样式
+当元素不通过验证时，jQuery validate插件默认是在元素的后面添加一个*class="error"*的label用于显示提示信息（[errorClass](https://jqueryvalidation.org/validate/#errorclass)）。我们可以通过定制css类：*.error*来达到自定义错误提示信息样式的效果。
+还可以指定css类。
+```javascript
+$("#myform").validate({
+    errorClass: "invalid" //set error class
+});
+```
+
+#### 3.自定义提示信息的html元素
+上面我们说到:jQuery validate插件默认是在元素的后面添加一个*class="error"*的label用于显示提示信息。如果我们不想用label，
+可以使用[errorElement]( https://jqueryvalidation.org/validate/#errorelement)进行自定义。如使用*<p>*标签代替label:
+```javascript
+$("#myform").validate({
+    errorElement: "p"
+});
+```
+
+#### 4.自定义提示信息的位置
+可以使用[errorPlacement](https://jqueryvalidation.org/validate/#errorplacement)进行自定义提示信息的位置。
+```javascript
+$("#myform").validate({
+    errorPlacement: function(error, element) {
+        error.appendTo(element.parent("td").next("td") );
+    }
+});
+```
+```
+error
+Type: jQuery
+The error label to insert into the DOM.
+element
+Type: jQuery
+The validated input, for relative positioning.
+```
+
+还可以把所有提示信息集中到一个地方，使用[errorLabelContainer](https://jqueryvalidation.org/validate/#errorlabelcontainer)
+```javascript
+$("#myform").validate({
+    errorLabelContainer: $("#myform div.error")
+});
+```
+
+
+>扩展： [Difference between errorContainer and errorLabelContainer options in jQuery Validate](https://stackoverflow.com/questions/25315094/difference-between-errorcontainer-and-errorlabelcontainer-options-in-jquery-vali)
+
+
+> errorLabelContainer - All error labels are displayed inside an unordered list with the ID “messageBox”, as specified by the selector passed as errorContainer option.
+
+> In other words, as an example, the errorLabelContainer contains the errors as an unordered list. This unordered list goes inside of the errorContainer.
+
+> Example usage:
+
+```javascript
+$('form').validate({
+   errorContainer: "#messageBox1",
+   errorLabelContainer: "#messageBox1 ul",
+   wrapper: "li"
+});
+```
+
+> Will yield this markup...
+
+```html
+<div id="messageBox1">                <!- errorContainer ->
+   <ul>                               <!- errorLabelContainer ->
+       <li>Field is required</li>     <!- wrapper ->
+       <li>Enter a valid email</li>   <!- wrapper ->
+   </ul>
+</div>
+```
+
+#### 5.与noty的结合
+
+
 ---
+
+submitHandler等
 ### 4. 常见问题
 
 #### （1）字段名包含括号/点号的，需要用双引号将字段名括起来：
