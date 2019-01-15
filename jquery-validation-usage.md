@@ -435,3 +435,5 @@ $("#myform").validate({
 ```
 ### 9.示例
 TO BE CONTINUE...
+
+ref: [中文教程](http://www.runoob.com/jquery/jquery-plugin-validate.html)
