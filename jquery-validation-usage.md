@@ -179,8 +179,24 @@ $("#myform").validate({
     }
 });
 ```
+
+### 3.debug和submitHandler可选项
+#### 1.[debug](https://jqueryvalidation.org/validate/#debug)
+启用调试模式，为true时表单只验证，不提交，方便调试。
+
+#### 2.[submitHandler](https://jqueryvalidation.org/validate/#submithandler)
+验证通过时处理实际提交的回调函数。ajax提交请求很适合放在这里。
+
+```javascript
+$("#myform").validate({
+  submitHandler: function(form) {
+    $(form).ajaxSubmit();// or form.submit();
+  }
+});
+```
+
 ---
-### 3.自定义验证方法
+### 4.自定义验证方法
 [jQuery.validator.addMethod(name, method [, message])](https://jqueryvalidation.org/jQuery.validator.addMethod/)
 例1：验证输入是否以域名`http://mycorporatedomain.com`开头的方法.
 ```javascript
@@ -207,7 +223,7 @@ jQuery.validator.addMethod("math", function (value, element, params) {
    $.validator.format("Customer name must have at least {0} characters"));
 ```
 ---
-### 4.验证规则（rules）
+### 5.验证规则（rules）
 验证规则代表验证方法的集合。用于将多个方法应用到同一个输入元素上。如：
 ```javascript 
 $("#myform").validate({
@@ -235,7 +251,7 @@ $("#myform").validate({
 一切看起来都很完美，只是细心的你发现*addClassRules*并没有提供自定义*messages*的选项，我们可以通过修改默认的*messages*的办法来定制错误提示信息。
 ---
 
-### 5.修改内置方法的错误提示内容
+### 6.修改内置方法的错误提示内容
 引用自[stackoverflow: jQuery validation: change default error message](https://stackoverflow.com/questions/2457032/jquery-validation-change-default-error-message)
 ```javascript
 jQuery.extend(jQuery.validator.messages, {
@@ -261,8 +277,8 @@ jQuery.extend(jQuery.validator.messages, {
 
 ---
 
-### 6.修改未通过验证的元素的提示效果
-#### 1y
+### 7.修改未通过验证的元素的提示效果
+#### 1.自定义错误提示效果
 
 [jQuery Validation Plugin – Learn How To Show Custom Messages](http://www.99points.info/2015/04/jquery-validation-plugin-how-to-show-custom-error-messages/)
 
@@ -373,13 +389,10 @@ $('form').validate({
 </div>
 ```
 
-#### 5.与noty的结合
-
-
 ---
 
 submitHandler等
-### 4. 常见问题
+### 8. 常见问题
 
 #### （1）字段名包含括号/点号的，需要用双引号将字段名括起来：
 ```javascript
@@ -420,8 +433,5 @@ $("#myform").validate({
     }
 });
 ```
-### 3.示例
-为了尽可能多的用到内置的验证方法，例子的内容仅做演示。
-1、基本使用，包含自定义方法和自定义错误信息；修改内置方法的提示信息
-2、自定义错误信息的显示 （errorContainer，与noty结合）
-3、
+### 9.示例
+TO BE CONTINUE...

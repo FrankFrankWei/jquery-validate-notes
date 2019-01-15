@@ -6,19 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>jQuery validate plugin usage</title>
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" media="screen" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.min.css">
     <style type="text/css">
         /* input[type=text]{
     display:block;
 } */
-        .phone-group {}
+        .phone-group {
+            /* text-align: left */
+        }
 
         .has_error {
             border: 1px solid red;
         }
 
-        .error {
-            color: greenyellow;
-        }
+        /* .error {
+            color: red;
+        }  */
 
         form {
             width: 500px;
@@ -54,6 +58,9 @@
         <input type="checkbox" name="marriage" id="marriage" value="1">Married <br> <br>
         <input type="text" name="mateName" /> <br> <br>
         <input type="submit" value="Submit">
+        <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="左侧的 Tooltip">左侧的
+            Tooltip
+        </button>
         <!-- <input type="button" value="noty" id="btnNoty" > -->
     </form>
     <!-- <script src="http://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
@@ -62,15 +69,16 @@
     <script src="./scripts/jquery-1.10.2.min.js"></script>
     <script src="./scripts/jquery.validate.min.js"></script>
     <script src="./scripts/additional-methods.min.js"></script>
-    <link href="./css/noty.css" rel="stylesheet">
-    <script src="./scripts/noty.min.js" type="text/javascript"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script> -->
+    <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
     <script type="text/javascript">
-        $("#btnNoty").click(function () {
-            new Noty({
-                text: 'Some notification text',
-            }).show();
 
-        });
+        $(function () {
+            $("#inputForm").tooltip({
+                show: false,
+                hide: false
+            });
+        })
         $.validator.addMethod("laxEmail", function (value, element) {
             // allow any non-whitespace characters as the host part
             return this.optional(element) || /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@(?:\S{1,63})$/.test(value);
@@ -78,7 +86,9 @@
         // $.extend(jQuery.validator.messages, {
         //     required: "必填项",
         // });
-
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
         $.validator.messages.required = "";
 
         // $("form").validate({
@@ -88,6 +98,26 @@
         // });
 
         $.validator.addClassRules("cemail", { required: true, email: true, minlength: 16 });
+        $.validator.setDefaults({
+            showErrors: function (map, list) {
+                // there's probably a way to simplify this
+                var focussed = document.activeElement;
+                if (focussed && $(focussed).is("input, textarea")) {
+                    $(this.currentForm).tooltip("close", {
+                        currentTarget: focussed
+                    }, true)
+                }
+                this.currentElements.removeAttr("title").removeClass("ui-state-highlight");
+                $.each(list, function (index, error) {
+                    $(error.element).attr("title", error.message).addClass("ui-state-highlight");
+                });
+                if (focussed && $(focussed).is("input, textarea")) {
+                    $(this.currentForm).tooltip("open", {
+                        target: focussed
+                    });
+                }
+            }
+        });
         $(function () {
             $("form").validate({
                 debug: true,
@@ -96,17 +126,26 @@
                 //     error.appendTo(element.next("p"));
                 // },
                 // showErrors: function (map, list) {
-                //     new Noty({
-                //         text: map.value,
-                //         container: list.element
-                //     }).show();
+                //     // there's probably a way to simplify this
+                //     var focussed = document.activeElement;
+                //     if (focussed && $(focussed).is("input")) {
+                //         $(this.currentForm).tooltip("destroy");
+                //     }
+                //     // this.currentElements.removeAttr("title").removeClass("ui-state-highlight");
+                //     this.currentElements.removeAttr("title");
+                //     $.each(list, function (index, error) {
+                //         $(error.element).attr("title", error.message).attr("data-toggle", "tooltip");
+                //     });
+                //     if (focussed && $(focussed).is("input")) {
+                //         $(this.currentForm).tooltip("show");
+                //         // $(this.currentForm).tooltip("show", {
+                //         //     target: focussed
+                //         // });
+                //     }
                 // },
                 // errorElement: "p",
                 // errorPlacement: function (error, element) {
-                //     new Noty({
-                //         text: 'error',
-                //         container: element.parent
-                //     }).show();
+                //     $(element).tooltip({title: $(error).text()});
                 // },
                 rules: {
                     name: "required",
@@ -154,17 +193,33 @@
                     }
                 },
                 highlight: function (element, errorClass) {
-                    $(element).fadeOut(1000, function () {
-                        $(element).fadeIn();
-                        $(element).addClass('has_error');
-                        // $(element).parent().addClass('error')
-                    });
+                    // $(element).tooltip({title:"test"}).show();
+                    $(element).addClass('has_error');
+                    // $(element).tooltip({ title: $(element).next().text() });
+                    $(element).attr("title", $(element).next().text()).attr("data-toggle", "tooltip")
+                        .attr("data-placement", "bottom");
+                    $(element).tooltip('show');
                 },
                 unhighlight: function (element) {
-                    // remove the class "has_error" from the element 
-                    $(element).removeClass('has_error');
-                    // $(element).parent().removeClass('error')
+                    $(element).removeAttr("data-toggle");
+                    // $(element).removeAttr("data-original-title");
+                    // $(element).removeAttr("title");
+                    // $(element).removeAttr("data-placement");
+                    $(element).tooltip("destroy");
+                    //     $(element).removeClass('has_error');
                 },
+                // highlight: function (element, errorClass) {
+                //     $(element).fadeOut(1000, function () {
+                //         $(element).fadeIn();
+                //         $(element).addClass('has_error');
+                //         // $(element).parent().addClass('error')
+                //     });
+                // },
+                // unhighlight: function (element) {
+                //     // remove the class "has_error" from the element 
+                //     $(element).removeClass('has_error');
+                //     // $(element).parent().removeClass('error')
+                // },
             });
         })
     </script>
