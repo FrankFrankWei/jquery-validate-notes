@@ -69,9 +69,20 @@
     <script src="./scripts/jquery-1.10.2.min.js"></script>
     <script src="./scripts/jquery.validate.min.js"></script>
     <script src="./scripts/additional-methods.min.js"></script>
+    <script src="./scripts/jquery.mockjax.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script> -->
     <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
     <script type="text/javascript">
+        $.mockjax({
+            url: "/checkemail",
+            response: function (settings) {
+                if (settings.email == "111@qq.com") {
+                    this.responseText = "false"
+                }
+
+                this.responseText = "true"
+            }
+        });
 
         $(function () {
             $("#inputForm").tooltip({
@@ -158,7 +169,8 @@
                     },
                     email: {
                         required: true,
-                        email: true
+                        email: true,
+                        remote: "/checkemail"
                     },
                     cars: "required",
                     psd: {
@@ -221,17 +233,5 @@
         })
     </script>
 </body>
-<script>
-    // $("form").validate({
-    //     highlight: function (element) {
-    //         // add a class "has_error" to the element 
-    //         $(element).addClass('has_error');
-    //     },
-    //     unhighlight: function (element) {
-    //         // remove the class "has_error" from the element 
-    //         $(element).removeClass('has_error');
-    //     },
-    // })
-</script>
 
 </html>

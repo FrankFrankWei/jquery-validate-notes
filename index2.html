@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>jQuery validate plugin usage</title>
+    <style type="text/css">
+        .phone-group {
+            /* text-align: left */
+        }
+
+        .has_error {
+            border: 1px solid red;
+        }
+
+        .valid_me {
+            border: 1px solid lightgreen;
+        }
+
+        /* .error {
+            color: red;
+        }  */
+
+        form {
+            width: 500px;
+            margin: 30px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="inputForm" method="post">
+        Name: <input type="text" name="name"> <br /> <br />
+        Age(1~150): <input type="text" name="age"> <br /> <br />
+        Phone: <input type="text" name="phone"> (regex) <br /> <br />
+        Email: <input type="text" name="email"> <br /> <br />
+        Password: <input type="text" name="psd"> <br /> <br />
+        <input type="radio" name="sex" value="male" checked>Male <input type="radio" name="sex" value="female">Female
+        <br /> <br />
+        File: <input type="text" name="file"> <br /> <br />
+        Car: <select name="cars">
+            <option value=""> ---- </option>
+            <option value="volvo">Volvo</option>
+            <option value="saab">Saab</option>
+            <option value="fiat">Fiat</option>
+            <option value="audi">Audi</option>
+        </select> <br /> <br />
+        Mobile phone: <input class="phone-group" id="mobile_phone" name="mobile_phone"> <br /> <br />
+        Home phone: <input class="phone-group" id="home_phone" name="home_phone"> <br /> <br />
+        Work phone: <input class="phone-group" id="work_phone" name="work_phone"> <br /> <br />
+
+        Email1:<input name="email1" class="cemail" /> <br /> <br />
+        Email2:<input name="email2" class="cemail" /> <br /> <br />
+        Email3:<input name="email3" class="cemail" /> <br /> <br />
+        <input type="checkbox" name="marriage" id="marriage" value="1">Married <br> <br>
+        <input type="text" name="mateName" /> <br> <br>
+        <input type="submit" value="Submit">
+        <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="左侧的 Tooltip">左侧的
+            Tooltip
+        </button>
+        <!-- <input type="button" value="noty" id="btnNoty" > -->
+    </form>
+    <script src="./scripts/jquery-1.10.2.min.js"></script>
+    <script src="./scripts/jquery.validate.min.js"></script>
+    <script src="./scripts/additional-methods.min.js"></script>
+    <script src="./scripts/jquery.mockjax.js"></script>
+    <script type="text/javascript">
+        $.mockjax({
+            url: "/checkemail",
+            response: function (settings) {
+                //var email = settings.data.email
+                // var   emails = ["222@qq.com", "george@bush.gov", "me@god.com", "aboutface@cooper.com", "steam@valve.com", "bill@gates.com"];
+
+                // this.responseText = "true";
+                // if ($.inArray(email, emails) !== -1) {
+                //     this.responseText = "false";
+                // }
+
+                this.responseText = "true"
+                if (settings.data.email == "111@qq.com") {
+                    this.responseText = "false"
+                }
+            }
+        });
+
+        $.validator.addMethod("laxEmail", function (value, element) {
+            // allow any non-whitespace characters as the host part
+            return this.optional(element) || /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@(?:\S{1,63})$/.test(value);
+        }, 'Please enter a valid email address.');
+
+        $.extend(jQuery.validator.messages, {
+            required: "必填项",
+        });
+
+        // $.validator.messages.required = "";
+
+        $.validator.addClassRules("cemail", { required: true, email: true, minlength: 16 });
+
+        $(function () {
+            $("form").validate({
+                debug: true,
+                // success: "valid_me",
+                success: function (label, element) {
+                    label.addClass("valid_me").text("Ok!")
+                    $(element).addClass("valid_me")
+                },
+                rules: {
+                    name: "required",
+                    age: {
+                        required: true,
+                        min: 1,
+                        max: 150, // or range: [1, 150]
+                        digits: true
+                    },
+                    phone: {
+                        required: true,
+
+                    },
+                    email: {
+                        required: true,
+                        email: true,
+                        remote: "/checkemail"
+                    },
+                    cars: "required",
+                    psd: {
+                        required: true,
+                        minlength: 8
+                    },
+                    file: {
+                        required: true,
+                        extension: "xml",
+                        pattern: "[0-9]*.xml"
+                    },
+                    mobile_phone: {
+                        require_from_group: [1, ".phone-group"]
+                    },
+                    home_phone: {
+                        require_from_group: [1, ".phone-group"]
+                    },
+                    work_phone: {
+                        require_from_group: [1, ".phone-group"]
+                    },
+                    mateName: {
+                        required: "#marriage:checked"
+                    }
+                },
+                messages: {
+                    file: {
+                        extension: "file must be .xml",
+                        pattern: "文件名必须是数字"
+                    },
+                    email: {
+                        remote: jQuery.validator.format("{0} is already in use")
+                    }
+                },
+            });
+        })
+    </script>
+</body>
+
+</html>

@@ -180,7 +180,7 @@ $("#myform").validate({
 });
 ```
 
-### 3.debug和submitHandler可选项
+### 3.debug、submitHandler和success可选项
 #### 1.[debug](https://jqueryvalidation.org/validate/#debug)
 启用调试模式，为true时表单只验证，不提交，方便调试。
 
@@ -189,11 +189,47 @@ $("#myform").validate({
 
 ```javascript
 $("#myform").validate({
-  submitHandler: function(form) {
-    $(form).ajaxSubmit();// or form.submit();
-  }
+    submitHandler: function(form) {
+        $(form).ajaxSubmit();// or form.submit();
+    }
+});
+
+```
+
+#### 3.[success](https://jqueryvalidation.org/validate/#success)
+`success`选项可以接收字符串或者函数作为参数。参数为字符串时，会被当做css类作用到提示信息的label上；
+参数为函数时，该函数包含提示label和正接受验证的DOM元素（如输入框）。
+
+例1: 验证通过时附加css类`valid`到提示label上
+
+```javascript
+$("#myform").validate({
+    success: "valid_me",
+    submitHandler: function() { alert("Submitted!") }
 });
 ```
+> 常见的输入通过验证给“打勾”的提示图片就可以在这里实现
+
+例2: 验证通过时附加css类`valid`到提示label上, 并更改提示信息为“OK”
+
+```javascript
+$("#myform").validate({
+  success: function(label) {
+    label.addClass("valid").text("Ok!")
+  },
+  submitHandler: function() { alert("Submitted!") }
+});
+```
+
+该回调函数包含两个参数：
+
+label
+类型: jQuery
+存放提示信息的label。可用于修改css类或定制文本内容
+
+element
+类型: Element
+当前验证的DOM元素
 
 ---
 ### 4.自定义验证方法
@@ -274,7 +310,6 @@ jQuery.extend(jQuery.validator.messages, {
     min: jQuery.validator.format("Please enter a value greater than or equal to {0}.")
 });
 ```
-
 ---
 
 ### 7.修改未通过验证的元素的提示效果
